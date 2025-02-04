@@ -1279,6 +1279,15 @@ function calcs.defence(env, actor)
 		if arcaneSurgeDamage ~= 0 then modDB:NewMod("Damage", "MORE", arcaneSurgeDamage * effect, "Arcane Surge", ModFlag.Spell) end
 	end
 
+	-- Quicksand Hourglass effect
+	if modDB:Flag(nil, "Condition:QuicksandHourglassAverage") then -- Average
+		local duration = 1 + modDB:Sum("INC", { keywordFlag = 5 }, "Duration") / 100 -- need to get buff duration
+		duration = duration*((50/12)*4)
+		modDB:NewMod("Speed", "MORE", duration, "Quicksand Hourglass", ModFlag.Cast)
+	elseif modDB:Flag(nil, "Condition:QuicksandHourglassActive") then -- Active
+		modDB:NewMod("Speed", "MORE", 50, "Quicksand Hourglass", ModFlag.Cast)
+	end
+
 	-- Recovery modifiers
 	output.LifeRecoveryRateMod = 1
 	if not modDB:Flag(nil, "CannotRecoverLifeOutsideLeech") then
