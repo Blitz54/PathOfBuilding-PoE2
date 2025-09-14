@@ -2590,7 +2590,7 @@ function calcs.buildDefenceEstimations(env, actor)
 	end
 	
 	-- Life Recoverable
-	output.LifeRecoverable = output.LifeUnreserved
+	output.LifeRecoverable = output.LifeUnreserved * (modDB:Sum("BASE", nil, "Multiplier:CurrentLifePercentage") / 100)
 	if env.configInput["conditionLowLife"] then
 		output.LifeRecoverable = m_min(output.Life * (output.LowLifePercentage or data.misc.LowPoolThreshold) / 100, output.LifeUnreserved)
 		if output.LifeRecoverable < output.LifeUnreserved then
@@ -3625,7 +3625,7 @@ function calcs.buildDefenceEstimations(env, actor)
 			else
 				finalMaxHit = round(partMin / enemyDamageMult)
 			end
-			
+		
 			local maxHitCurType = damageType.."MaximumHitTaken"
 			output[maxHitCurType] = finalMaxHit
 

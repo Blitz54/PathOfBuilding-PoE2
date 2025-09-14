@@ -1085,7 +1085,7 @@ c["10% increased Intelligence"]={{[1]={flags=0,keywordFlags=0,name="Int",type="I
 c["10% increased Knockback Distance"]={{[1]={flags=0,keywordFlags=0,name="EnemyKnockbackDistance",type="INC",value=10}},nil}
 c["10% increased Life Recovery from Flasks"]={{[1]={flags=0,keywordFlags=0,name="FlaskLifeRecovery",type="INC",value=10}},nil}
 c["10% increased Life Recovery rate"]={{[1]={flags=0,keywordFlags=0,name="LifeRecoveryRate",type="INC",value=10}},nil}
-c["10% increased Life Recovery rate per 5% missing Unreserved Life"]={{[1]={flags=0,keywordFlags=0,name="LifeRecoveryRate",type="INC",value=10}},"  per 5% missing Unreserved Life "}
+c["10% increased Life Recovery rate per 5% missing Unreserved Life"]={{[1]={[1]={div=5,type="Multiplier",var="CurrentLifePercentageMissing"},flags=0,keywordFlags=0,name="LifeRecoveryRate",type="INC",value=10}},nil}
 c["10% increased Life Regeneration rate"]={{[1]={flags=0,keywordFlags=0,name="LifeRegen",type="INC",value=10}},nil}
 c["10% increased Life and Mana Recovery from Flasks"]={{[1]={flags=0,keywordFlags=0,name="FlaskLifeRecovery",type="INC",value=10},[2]={flags=0,keywordFlags=0,name="FlaskManaRecovery",type="INC",value=10}},nil}
 c["10% increased Lightning Damage"]={{[1]={flags=0,keywordFlags=0,name="LightningDamage",type="INC",value=10}},nil}
