@@ -118,7 +118,7 @@ local configSettings = {
 		modList:NewMod("Multiplier:CurrentManaPercentage", "BASE", m_max(m_min(val,100), 0), "Config")
 	end },
 	{ var = "multiplierCurrentLifePercentage", type = "count", label = "Current ^xE05030Life^7 %:", defaultState = 100, apply = function(val, modList, enemyModList)
-		modList:NewMod("Multiplier:CurrentLifePercentage", "BASE", m_max(m_min(val,100), 0), "Config")
+		modList:NewMod("Multiplier:CurrentLifePercentage", "BASE", m_max(m_min(val,150), 0), "Config")
 		modList:NewMod("Multiplier:CurrentLifePercentageMissing", "BASE", m_max(m_min(100 - val, 100), 0), "Config")
 	end },
 	{ var = "conditionStationary", type = "count", label = "Time spent stationary", ifCond = "Stationary",
