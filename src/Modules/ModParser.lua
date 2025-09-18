@@ -868,7 +868,7 @@ local modNameList = {
 	["to chain an additional time"] = "ChainChance",
 	["penalty to accuracy rating at range"] = "AccuracyPenalty",
 	["when you reload a crossbow to be immediate"] = "InstantReloadChance",
-	["to not consume a bolt"] = "ChanceToNotConsumeAmmo",
+	["to not expend ammunition"] = "ChanceToNotConsumeAmmo",
 	-- Flask and Charm modifiers
 	["effect"] = "LocalEffect",
 	["effect of flasks"] = "FlaskEffect",
@@ -1270,6 +1270,7 @@ local preFlagList = {
 	["^non%-channelling spells "] = { keywordFlags = KeywordFlag.Spell, tag = { type = "SkillType", skillType = SkillType.Channel, neg = true } },
 	["^non%-channelling spells [hd][ae][va][el] "] = { flags = ModFlag.Spell, tag = { type = "SkillType", skillType = SkillType.Channel, neg = true } },
 	["^non%-vaal skills deal "] = { tag = { type = "SkillType", skillType = SkillType.Vaal, neg = true } },
+	["^bolts fired by crossbow attacks [hd][ae][va][el] "] = { flags = ModFlag.Crossbow, tag = { type = "SkillType", skillType = SkillType.CrossbowSkill }  },
 	["^skills [hgdf][aei][vari][eln] "] = { },
 	["^triggered spells [hd][ae][va][el] "] = { keywordFlags = KeywordFlag.Spell, tag = { type = "SkillType", skillType = SkillType.Triggered  } },
 	["^totems have "] = { keywordFlags = KeywordFlag.Totem },
@@ -3180,13 +3181,13 @@ local specialModList = {
 	["attribute requirements of gems can be satisi?fied by your highest attribute"] = { flag("GemAttributeRequirementsSatisfiedByHighestAttribute") },
 	["you can use two copies of the same support gem in different skills"] = { mod("MaxSupportGemCopies", "OVERRIDE", 2) },
 	["you can use each type of support gem an additional time in different skills"] = { mod("MaxSupportGemCopies", "OVERRIDE", 2) },
-	["skills gain (%d+)%% increased critical hit chance per socketed blue support gem"] = function(num) return { 
+	["skills have (%d+)%% increased critical hit chance per connected blue support gem"] = function(num) return { 
 		mod("SkillCritChanceIncreasedPerBlueSupport", "FLAG", num) 
 	} end,
-	["skills gain (%d+)%% increased damage per socketed red support gem"] = function(num) return { 
+	["skills deal (%d+)%% increased damage per connected red support gem"] = function(num) return { 
 		mod("SkillDamageIncreasedPerRedSupport", "FLAG", num) 
 	} end,
-	["skills gain (%d+)%% increased skill speed per socketed green support gem"] = function(num) return { 
+	["skills have (%d+)%% increased skill speed per connected green support gem"] = function(num) return { 
 		mod("SkillSpeedIncreasedPerGreenSupport", "FLAG", num) 
 	} end,
 	["for each colour of socketed support gem that is most numerous, gain:"] = {}, 
@@ -3981,6 +3982,9 @@ local specialModList = {
 	["your aura buffs do not affect allies"] = { flag("SelfAurasCannotAffectAllies") },
 	["your curses have (%d+)%% increased effect if (%d+)%% of curse duration expired"] = function(num, _, limit) return {
 		mod("CurseEffect", "INC", num, { type = "MultiplierThreshold", actor = "enemy", var = "CurseExpired", threshold = tonumber(limit) }, { type = "SkillType", skillType =  SkillType.AppliesCurse })
+	} end,
+	["your curses have (%d+)%% increased magnitudes if (%d+)%% of curse duration expired"] = function(num, _, limit) return {
+		mod("Magnitude", "INC", num, { type = "MultiplierThreshold", actor = "enemy", var = "CurseExpired", threshold = tonumber(limit) }, { type = "SkillType", skillType =  SkillType.AppliesCurse })
 	} end,
 	["non%-aura hexes expire upon reaching (%d+)%% of base effect non%-aura hexes gain (%d+)%% increased effect per second"] = function(limit, _, num) return {
 		mod("CurseEffect", "INC", tonumber(num), { type = "Multiplier", actor = "enemy", var = "CurseDurationExpired", limit = tonumber(limit), limitTotal = true }, { type = "SkillType", skillType = SkillType.Aura, neg = true }, { type = "SkillType", skillType =  SkillType.Hex })
@@ -6502,6 +6506,18 @@ local jewelOtherFuncs = {
 			end
 		end
 	end,
+	["conquered (%w+) Passive Skills also grant (.*)$"] = function(type, mod)
+		return function(node, out, data)
+			if node and (node.type == firstToUpper(type) or (node.type == "Normal" and not node.isAttribute and firstToUpper(type) == "Small") or (node.type == "Normal" and node.isAttribute and firstToUpper(type) == "Attribute")) then
+				local modList, line = parseMod(mod)
+				if not line and modList[1] then -- something failed to parse, do not add to list
+					modList[1].parsedLine = capitalizeWordsInString(mod)
+					modList[1].source = data.modSource
+					out:AddMod(modList[1])
+				end
+			end
+		end
+	end,
 	--------
 	["50% increased Effect of non-Keystone Passive Skills in Radius"] = function(node, out, data)
 		if node and node.type ~= "Keystone" then
@@ -6700,15 +6716,9 @@ for k, v in pairs(jewelOtherFuncs) do
 		-- Need to not modify any nodes already modified by timeless jewels
 		-- Some functions return a function instead of simply adding mods, so if
 		-- we don't see a node right away, run the outer function first
-		if cap1 and type(cap1) == "table" and cap1.conqueredBy then
-			return
-		end
 		local innerFuncOrNil = v(cap1, cap2, cap3, cap4, cap5)
 		-- In all (current) cases, there is only one nested layer, so no need for recursion
 		return function(node, out, other)
-			if node and type(node) == "table" and node.conqueredBy then
-				return
-			end
 			return innerFuncOrNil(node, out, other)
 		end
 	end, type = "Other" }

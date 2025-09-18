@@ -514,7 +514,7 @@ return {
 	{ label = "Skill Trigger Rate", flagList = {"triggered", "focused"}, { format = "{2:output:SkillTriggerRate}", { breakdown = "SkillTriggerRate" }, { breakdown = "SimData" }, { modName = "FocusCooldownRecovery", modType = "INC", cfg = "skill", }, }, },
 	{ label = "Cast time", flag = "spell", notFlag = "triggered", { format = "{2:output:Time}s", }, },
 	{ label = "CWDT Threshold", haveOutput = "CWDTThreshold", flag = "triggered", { format = "{2:output:CWDTThreshold}", { breakdown = "CWDTThreshold" }, }, },
-	{ label = "Channel time", flag = "channelRelease", haveOutput = "HitTime", { format = "{2:output:HitTime}s", { breakdown = "HitTime" } }, },
+	{ label = "Channel time", flag = "channelRelease", haveOutput = "ChannelTime", { format = "{2:output:ChannelTime}s", { breakdown = "ChannelTime" } }, },
 	{ label = "Hit Rate", haveOutput = "HitSpeed", { format = "{2:output:HitSpeed}", { breakdown = "HitSpeed" } }, },
 } }
 } },
@@ -1683,7 +1683,7 @@ return {
 	extra = "{0:output:EffectiveBlockChance}%",
 	{ label = "Block Chance", { format = "{0:output:BlockChance}% (+{0:output:BlockChanceOverCap}%)",
 		{ breakdown = "BlockChance" },
-		{ modName = { "BlockChance", "ReplaceShieldBlock" } }, 
+		{ modName = { "BlockChance", "ReplaceShieldBlock", "BlockChanceMax" } }, 
 	}, },
 	{ label = "Taken From Block", haveOutput = "ShowBlockEffect", { format = "{0:output:DamageTakenOnBlock}%", 
 		{ breakdown = "BlockEffect" }, 
